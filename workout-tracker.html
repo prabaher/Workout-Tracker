@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Workout Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #1a1a2e;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            color: #fff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #16213e;
+            border-radius: 10px;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-group label {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-group input {
+            background: #0f3460;
+            border: 2px solid #667eea;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .info-group input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(118, 75, 162, 0.3);
+        }
+
+        .info-group input:disabled {
+            background: #0a1929;
+            cursor: not-allowed;
+            color: #888;
+        }
+
+        .exercises {
+            margin-bottom: 25px;
+        }
+
+        .exercise-card {
+            background: #16213e;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .exercise-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .exercise-card.pushups {
+            border-left-color: #ff6b6b;
+        }
+
+        .exercise-card.crunches {
+            border-left-color: #ffd93d;
+        }
+
+        .exercise-card.plank {
+            border-left-color: #6bcf7f;
+        }
+
+        .exercise-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .exercise-icon {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.85em;
+            color: #ccc;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            background: #0f3460;
+            border: 2px solid #444;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-save:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset {
+            background: #444;
+            color: #fff;
+        }
+
+        .btn-reset:hover {
+            background: #555;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .message.success {
+            background: #1b5e20;
+            color: #4caf50;
+            border-left: 4px solid #4caf50;
+            display: block;
+        }
+
+        .message.error {
+            background: #b71c1c;
+            color: #ff6b6b;
+            border-left: 4px solid #ff6b6b;
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #444;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .timestamp {
+            font-size: 0.85em;
+            color: #888;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+
+            .exercise-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 Daily Workout Tracker</h1>
+            <p>Track your fitness journey</p>
+        </div>
+
+        <form id="workoutForm">
+            <!-- User Info Section -->
+            <div class="info-section">
+                <div class="info-group">
+                    <label for="wakeupTime">Wake up Time</label>
+                    <input type="time" id="wakeupTime" required>
+                </div>
+                <div class="info-group">
+                    <label for="date">Today's Date</label>
+                    <input type="date" id="date" disabled>
+                </div>
+            </div>
+
+            <!-- Exercises Section -->
+            <div class="exercises">
+                <!-- Plank -->
+                <div class="exercise-card plank">
+                    <h3><span class="exercise-icon">⏱️</span>Plank</h3>
+                    <div class="exercise-grid">
+                        <div class="form-group full">
+                            <label for="plankSeconds">How many seconds?</label>
+                            <input type="number" id="plankSeconds" placeholder="e.g., 60" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pushups -->
+                <div class="exercise-card pushups">
+                    <h3><span class="exercise-icon">📈</span>Pushups</h3>
+                    <div class="exercise-grid">
+                        <div class="form-group">
+                            <label for="pushupReps">Reps per Set</label>
+                            <input type="number" id="pushupReps" placeholder="e.g., 20" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="pushupSets">Sets</label>
+                            <input type="number" id="pushupSets" placeholder="e.g., 3" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crunches -->
+                <div class="exercise-card crunches">
+                    <h3><span class="exercise-icon">🔥</span>Crunches</h3>
+                    <div class="exercise-grid">
+                        <div class="form-group">
+                            <label for="crunchReps">Reps per Set</label>
+                            <input type="number" id="crunchReps" placeholder="e.g., 25" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="crunchSets">Sets</label>
+                            <input type="number" id="crunchSets" placeholder="e.g., 3" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn-save">Save to Sheets</button>
+                <button type="reset" class="btn-reset">Clear All</button>
+            </div>
+
+            <!-- Messages -->
+            <div id="message" class="message"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Saving your workout...</p>
+            </div>
+        </form>
+
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+
+    <script>
+        // Initialize date field with today's date
+        function initializeDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('timestamp').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            setTimeout(() => {
+                messageEl.className = 'message';
+            }, 4000);
+        }
+
+        // Form submission
+        document.getElementById('workoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate wake up time
+            const wakeupTime = document.getElementById('wakeupTime').value;
+            if (!wakeupTime) {
+                showMessage('Please enter your wake up time', 'error');
+                return;
+            }
+
+            // Collect data
+            const workoutData = {
+                date: document.getElementById('date').value,
+                wakeup_time: wakeupTime,
+                current_time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                plank_seconds: document.getElementById('plankSeconds').value || '0',
+                pushup_reps: document.getElementById('pushupReps').value || '0',
+                pushup_sets: document.getElementById('pushupSets').value || '0',
+                crunch_reps: document.getElementById('crunchReps').value || '0',
+                crunch_sets: document.getElementById('crunchSets').value || '0'
+            };
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                // Send to Google Sheets via AppScript
+                const response = await fetch('https://script.google.com/macros/s/AKfycbxpBVeZheKt97dqqM29PM1A9orqbIuGlTxAVeWVv4uXpikqyf4lUrsaWFhTAkQjOTl5og/exec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'   
+                    },
+                    body: JSON.stringify(workoutData)
+                });
+
+                const result = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (result.success) {
+                    showMessage('✅ Workout saved successfully!', 'success');
+                    document.getElementById('workoutForm').reset();
+                    initializeDate();
+                } else {
+                    showMessage('❌ Error: ' + (result.message || 'Failed to save'), 'error');
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                showMessage('❌ Network error. Check AppScript URL.', 'error');
+                console.error('Error:', error);
+            }
+        });
+
+        // Initialize
+        initializeDate();
+        updateTimestamp();
+    </script>
+</body>
+</html>
